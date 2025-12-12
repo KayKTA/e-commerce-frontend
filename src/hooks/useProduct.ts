@@ -2,7 +2,22 @@ import { useCallback, useEffect, useState } from "react";
 import { getProductById } from "../api/products";
 import type { Product } from "../types/product";
 
-// Hook to fetch a single product by ID
+/**
+ * React hook to fetch a Product by id.
+ *
+ * Fetches the product on mount and when `id` changes. Exposes loading and error
+ * states and a `reload` callback that can be called to re-fetch the product.
+ *
+ * @param id - The product id to fetch. If falsy, no request is made.
+ * @returns An object with:
+ *   - product: Product | null
+ *   - loading: boolean
+ *   - error: string | null
+ *   - reload: () => Promise<void>
+ *
+ * @example
+ * const { product, loading, error, reload } = useProduct("abc123");
+ */
 export function useProduct(id?: string) {
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(false);
