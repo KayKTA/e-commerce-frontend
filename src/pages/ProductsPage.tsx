@@ -1,13 +1,52 @@
-import { Alert, Box, CircularProgress, Stack, Typography } from "@mui/material";
+import {
+    Alert,
+    Box,
+    CircularProgress,
+    Pagination,
+    Stack,
+    TextField,
+    Typography,
+} from "@mui/material";
+import { useMemo, useState } from "react";
 import { useProducts } from "../hooks/useProducts";
-import { useCart } from "../hooks/useCart";
-import { useWishlist } from "../hooks/useWishlist";
 import ProductCard from "../components/ProductCard";
+import { useCartContext } from "../context/CartContext";
+import { useWishlistContext } from "../context/WishListContext";
+
+const PAGE_SIZE = 8;
 
 export default function ProductsPage() {
     const { products, loading, error } = useProducts(true);
-    const cart = useCart(false);
-    const wishlist = useWishlist(true);
+
+    const cart = useCartContext();
+    const wishlist = useWishlistContext();
+
+    const [query, setQuery] = useState("");
+    const [page, setPage] = useState(1);
+
+    const filtered = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        if (!q) return products;
+
+        return products.filter((p) => {
+            const hay = `${p.name} ${p.category} ${p.description}`.toLowerCase();
+            return hay.includes(q);
+        });
+    }, [products, query]);
+
+    const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+
+    const visible = useMemo(() => {
+        const safePage = Math.min(page, pageCount);
+        const start = (safePage - 1) * PAGE_SIZE;
+        return filtered.slice(start, start + PAGE_SIZE);
+    }, [filtered, page, pageCount]);
+
+    // send back to page 1 on query change
+    function onChangeQuery(v: string) {
+        setQuery(v);
+        setPage(1);
+    }
 
     if (loading) {
         return (
@@ -19,17 +58,26 @@ export default function ProductsPage() {
 
     return (
         <Stack spacing={2}>
-            <Typography variant="h4" fontWeight={900}>
-                Products
-            </Typography>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "center" }}>
+                <Typography variant="h4" fontWeight={900} sx={{ flex: 1 }}>
+                    Products
+                </Typography>
 
-            {/* 👇 IMPORTANT : on affiche les erreurs mutation (sinon tu “ne vois rien”) */}
+                <TextField
+                    size="small"
+                    label="Search"
+                    value={query}
+                    onChange={(e) => onChangeQuery(e.target.value)}
+                    sx={{ width: { xs: "100%", sm: 320 } }}
+                />
+            </Stack>
+
             {error && <Alert severity="error">{error}</Alert>}
             {cart.error && <Alert severity="error">{cart.error}</Alert>}
             {wishlist.error && <Alert severity="error">{wishlist.error}</Alert>}
 
             <Stack spacing={1.5}>
-                {products.map((p) => (
+                {visible.map((p) => (
                     <ProductCard
                         key={p.id}
                         product={p}
@@ -41,6 +89,19 @@ export default function ProductsPage() {
                     />
                 ))}
             </Stack>
+
+            <Stack direction="row" justifyContent="center" sx={{ pt: 1 }}>
+                <Pagination
+                    count={pageCount}
+                    page={page}
+                    onChange={(_, value) => setPage(value)}
+                    color="primary"
+                />
+            </Stack>
+
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center" }}>
+                {filtered.length} product(s)
+            </Typography>
         </Stack>
     );
 }

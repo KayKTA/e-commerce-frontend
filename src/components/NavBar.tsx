@@ -3,8 +3,8 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Link, useNavigate } from "react-router-dom";
 import { clearToken } from "../state/authStore";
-import { useCart } from "../hooks/useCart";
-import { useWishlist } from "../hooks/useWishlist";
+import { useCartContext } from "../context/CartContext";
+import { useWishlistContext } from "../context/WishListContext";
 
 type Props = {
     appName?: string;
@@ -13,8 +13,8 @@ type Props = {
 export default function NavBar({ appName = "Alten Shop" }: Props) {
     const navigate = useNavigate();
 
-    const { cart } = useCart(true);
-    const { wishlist } = useWishlist(true);
+    const { cart } = useCartContext();
+    const { wishlist } = useWishlistContext();
 
     const cartCount = cart?.items?.reduce((sum, it) => sum + it.quantity, 0) ?? 0;
     const wishCount = wishlist?.productIds?.length ?? 0;

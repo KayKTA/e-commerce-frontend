@@ -1,9 +1,9 @@
 import { Alert, Box, Button, CircularProgress, Divider, Paper, Stack, Typography } from "@mui/material";
-import { useCart } from "../hooks/useCart";
 import { useProducts } from "../hooks/useProducts";
+import { useCartContext } from "../context/CartContext";
 
 export default function CartPage() {
-    const { cart, loading, mutating, error, setQuantity, remove } = useCart(true);
+    const { cart, loading, mutating, error, setQuantity, remove } = useCartContext();
     const { products } = useProducts(true);
 
     if (loading) {

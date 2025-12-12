@@ -1,9 +1,9 @@
 import { Alert, Box, Button, CircularProgress, Divider, Paper, Stack, Typography } from "@mui/material";
-import { useWishlist } from "../hooks/useWishlist";
 import { useProducts } from "../hooks/useProducts";
+import { useWishlistContext } from "../context/WishListContext";
 
 export default function WishlistPage() {
-    const { wishlist, loading, mutating, error, remove } = useWishlist(true);
+    const { wishlist, loading, mutating, error, remove } = useWishlistContext();
     const { products } = useProducts(true);
 
     if (loading) {
