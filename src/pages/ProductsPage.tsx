@@ -1,9 +1,13 @@
-import { Alert, Box, CircularProgress, Paper, Stack, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Alert, Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { useProducts } from "../hooks/useProducts";
+import { useCart } from "../hooks/useCart";
+import { useWishlist } from "../hooks/useWishlist";
+import ProductCard from "../components/ProductCard";
 
 export default function ProductsPage() {
     const { products, loading, error } = useProducts(true);
+    const cart = useCart(false);
+    const wishlist = useWishlist(true);
 
     if (loading) {
         return (
@@ -13,46 +17,28 @@ export default function ProductsPage() {
         );
     }
 
-    if (error) return <Alert severity="error">{error}</Alert>;
-
     return (
         <Stack spacing={2}>
             <Typography variant="h4" fontWeight={900}>
                 Products
             </Typography>
 
-            <Stack spacing={1.5}>
-                {products.map((prod) => (
-                    <Paper
-                        key={prod.id}
-                        variant="outlined"
-                        component={Link}
-                        to={`/products/${prod.id}`}
-                        sx={{
-                            p: 2,
-                            borderColor: "divider",
-                            bgcolor: "background.paper",
-                            textDecoration: "none",
-                            color: "inherit",
-                            cursor: "pointer",
-                            "&:hover": { bgcolor: "action.hover" },
-                        }}
-                    >
-                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
-                            <Stack spacing={0.25} sx={{ minWidth: 0 }}>
-                                <Typography fontWeight={800} noWrap>
-                                    {prod.name}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {prod.category} - {prod.inventoryStatus}
-                                </Typography>
-                            </Stack>
+            {/* 👇 IMPORTANT : on affiche les erreurs mutation (sinon tu “ne vois rien”) */}
+            {error && <Alert severity="error">{error}</Alert>}
+            {cart.error && <Alert severity="error">{cart.error}</Alert>}
+            {wishlist.error && <Alert severity="error">{wishlist.error}</Alert>}
 
-                            <Typography fontWeight={800} sx={{ whiteSpace: "nowrap" }}>
-                                {prod.price.toFixed(2)} €
-                            </Typography>
-                        </Stack>
-                    </Paper>
+            <Stack spacing={1.5}>
+                {products.map((p) => (
+                    <ProductCard
+                        key={p.id}
+                        product={p}
+                        inWishlist={wishlist.has(p.id)}
+                        disableCart={cart.mutating}
+                        disableWishlist={wishlist.mutating}
+                        onAddToCart={(id) => cart.add(id, 1)}
+                        onToggleWishlist={(id, next) => (next ? wishlist.add(id) : wishlist.remove(id))}
+                    />
                 ))}
             </Stack>
         </Stack>

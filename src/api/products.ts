@@ -6,26 +6,27 @@ export type UpdateProductInput = Partial<CreateProductInput>; // All fields opti
 
 // Public functions
 export async function getProducts() {
-  const { data } = await api.get<Product[]>("/products");
-  return data;
+    const { data } = await api.get<Product[]>("/products");
+    return data;
 }
 
 export async function getProductById(id: string) {
-  const { data } = await api.get<Product>(`/products/${id}`);
-  return data;
+    console.log("[API] GET /products/" + id);
+    const { data } = await api.get<Product>(`/products/${id}`);
+    return data;
 }
 
 // Admin functions
 export async function createProduct(payload: CreateProductInput) {
-  const { data } = await api.post<Product>("/products", payload);
-  return data;
+    const { data } = await api.post<Product>("/products", payload);
+    return data;
 }
 
 export async function updateProduct(id: number, payload: UpdateProductInput) {
-  const { data } = await api.put<Product>(`/products/${id}`, payload);
-  return data;
+    const { data } = await api.put<Product>(`/products/${id}`, payload);
+    return data;
 }
 
 export async function deleteProduct(id: number) {
-  await api.delete(`/products/${id}`);
+    await api.delete(`/products/${id}`);
 }

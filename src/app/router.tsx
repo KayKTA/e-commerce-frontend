@@ -4,6 +4,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import LoginPage from "../pages/LoginPage";
 import ProductsPage from "../pages/ProductsPage";
 import ProductDetailsPage from "../pages/ProductDetailsPage";
+import CartPage from "../pages/CartPage";
+import WishlistPage from "../pages/WishlistPage";
 
 export const router = createBrowserRouter([
     {
@@ -17,6 +19,8 @@ export const router = createBrowserRouter([
                     { path: "/", element: <ProductsPage /> },
                     { path: "/products", element: <ProductsPage /> },
                     { path: "/products/:id", element: <ProductDetailsPage /> },
+                    { path: "/cart", element: <CartPage /> },
+                    { path: "/wishlist", element: <WishlistPage />}
                 ],
             },
         ],
