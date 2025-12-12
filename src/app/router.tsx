@@ -7,6 +7,7 @@ import ProductDetailsPage from "../pages/ProductDetailsPage";
 import CartPage from "../pages/CartPage";
 import WishlistPage from "../pages/WishlistPage";
 import ContactPage from "../pages/ContactPage";
+import HomePage from "../components/HomePage";
 
 export const router = createBrowserRouter([
     {
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
             {
                 element: <ProtectedRoute />,
                 children: [
-                    { path: "/", element: <ProductsPage /> },
+                    { path: "/", element: <HomePage /> },
                     { path: "/products", element: <ProductsPage /> },
                     { path: "/products/:id", element: <ProductDetailsPage /> },
                     { path: "/cart", element: <CartPage /> },
